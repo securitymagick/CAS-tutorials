@@ -40,12 +40,20 @@
 		Statement st = con.createStatement();
 		int i = st.executeUpdate("insert into catlovers(cat_name, email, uname, pass, securityQuestion, answer, regdate) values ('" + catname + "','" + email + "','" + user + "','" + pwd  + "','" + securityQuestion + "','" + answer  + "', CURDATE())");
 		if (i > 0) {
-		%>
+			Statement st2 = con.createStatement();
+			int j = st2.executeUpdate("insert into catphotos(uname, private, public) values ('" + user + "','n','n')");
+			if (j > 0) {
+			%>
 				<h2>REGISTRATION SUCCESSFUL</h2>
 				<h3>What do you want to do?</h3>
 				<p>					
 					<a href="<%= request.getContextPath() %>/protected/">See Overpoweringly Cute Cats</a>
-		<%
+			<%
+			} else {
+			%>
+				<h2> Partial registration only.  Please contact catAdmin. </h2>
+			<%
+			}
 		} else {
 		%>
 			<h2>An error occurred.  Please contact a catAdmin</h2>

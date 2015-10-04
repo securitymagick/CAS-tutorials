@@ -1,3 +1,4 @@
+<%@ page import ="java.sql.*" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%
@@ -24,18 +25,43 @@
 					<dd><%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %></dd>
 				</dl>
 
-				<h3>Your Private Cat Picture</h3>
-				<dl>
-					<dt>A cute cat: </dt>
-					<dd><img src="<%= request.getContextPath() %>/protected/images/private-<%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %>.jpg" /></dd>
-				</dl>
-
-				<h3>Your Public Cat Picture </h3>
-				<dl>
-					<dt>Another cute cat: </dt>
-					<dd><img src="<%= request.getContextPath() %>/protected/images/public-<%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %>.jpg"/></dd>
-				</dl>
-				<h3>What do you want to do?</h3>
+				<%
+					Class.forName("com.mysql.jdbc.Driver");
+					Connection con2 = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
+					Statement st2 = con2.createStatement();
+					ResultSet rs1 = st2.executeQuery("select * from catphotos where uname = '" + request.getRemoteUser() + "'");
+					if (rs1.next()) {
+						String publicPic = rs1.getString("public");
+						String privatePic = rs1.getString("private");
+						if (privatePic.equals("y")) {
+						%>
+							<h3>Your Private Cat Picture</h3>
+							<dl>
+								<dt>Your private cute cat: </dt>
+									<dd><img src="<%= request.getContextPath() %>/protected/images/private-<%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %>.jpg" /></dd>
+							</dl>
+						<%
+						} else {
+						%>
+							<h2> You haven't uplaoded a private cute cat yet!  Do so below.  </h2>
+						<%
+						}
+						if (publicPic.equals("y")) {
+						%>		
+							<h3>Your Public Cat Picture </h3>
+							<dl>
+								<dt>Your public cute cat: </dt>
+								<dd><img src="<%= request.getContextPath() %>/protected/images/public-<%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %>.jpg"/></dd>
+							</dl>
+						<%
+						} else {
+						%>
+							<h2> You haven't uplaoded a public cute cat yet!  Do so below.  </h2>
+						<%
+						}
+					}
+					%>
+							<h3>What do you want to do?</h3>
 				<dl>
 					<dt>Upload  </dt>
 					<dd><a href="<%= request.getContextPath() %>/protected/myCatPhotos.jsp">new private and public cat pictures </a></dd>

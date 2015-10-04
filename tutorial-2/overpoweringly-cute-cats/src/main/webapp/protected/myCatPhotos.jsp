@@ -1,3 +1,5 @@
+<%@ page import ="java.sql.*" %>
+<%@ page import="java.io.*" %>" 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%
@@ -16,26 +18,120 @@
 		<jsp:include page="/header.jsp" />
 		<div id="content">
 			<div class="box" id="login">
-				<h2>PROTECTED AREA</h2>
-
+				<h2>PROTECTED AREA</h2>				
 				<h3>Single Sign On data</h3>
 				<dl>
 					<dt>Your user name:</dt>
 					<dd><%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %></dd>
-				</dl>
-
-				<h3>Your Private Cat Picture</h3>
-				<dl>
-					<dt>A cute cat: </dt>
-					<dd><img src="<%= request.getContextPath() %>/protected/images/private-<%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %>.jpg" /></dd>
-				</dl>
-
-				<h3>Your Public Cat Picture </h3>
-				<dl>
-					<dt>Another cute cat: </dt>
-					<dd><img src="<%= request.getContextPath() %>/protected/images/public-<%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %>.jpg"/></dd>
-				</dl>
-				<h3>What do you want to do?</h3>
+				</dl>				
+				<%
+					String message = request.getParameter("message");
+					if (message != null) {
+						if (!message.isEmpty()) {
+						%>
+						<h2><%= message %></h2>
+						<%
+						}
+					}
+					String action = request.getParameter("action");
+					String source = request.getParameter("source");
+					Boolean deleteError = false;
+					if (action == null || source == null) {
+						deleteError = true;
+					} else if (action.isEmpty() || source.isEmpty()) {
+						deleteError = true;
+					} else if (!action.equals("delete")) {
+						deleteError = true;
+					} else if (source.equals("public") || source.equals("private")) {
+						String filePath = "C:\\Users\\leggosgirl\\Tools\\apache-tomcat-7.0.63\\webapps\\overpoweringly-cute-cats\\protected\\images\\";
+						String fileName = source + "-" + request.getRemoteUser() + ".jpg";
+						File file = new File(filePath + fileName);
+						if(file.delete()){
+							Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
+							Statement st = con.createStatement();
+							st.executeUpdate("update catphotos set " + source + "='n' where uname = '" + request.getRemoteUser() + "'");			
+							%>
+							<h2> Your <%= source %> cat picture was deleted. </h2>
+							<%
+						}else{
+							%>
+							<h2> Error deleting your <%= source %> cat picture. </h2>
+							<%
+						}			
+					}
+				
+					Class.forName("com.mysql.jdbc.Driver");
+					Connection con2 = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
+					Statement st2 = con2.createStatement();
+					ResultSet rs1 = st2.executeQuery("select * from catphotos where uname = '" + request.getRemoteUser() + "'");
+					if (rs1.next()) {
+						String publicPic = rs1.getString("public");
+						String privatePic = rs1.getString("private");
+						if (privatePic.equals("y")) {
+						%>
+							<h3>Your Private Cat Picture</h3>
+							<dl>
+								<dt>Your private cute cat: </dt>
+									<dd><img src="<%= request.getContextPath() %>/protected/images/private-<%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %>.jpg" /></dd>
+									<dt>Click to delete: </dt>
+									<dd><a href="<%= request.getContextPath() %>/protected/myCatPhotos.jsp?action=delete&source=private">Delete private cat image</a></dd>
+							</dl>
+							
+						<%
+						} else {
+						%>
+							<h2> You haven't uplaoded a private cute cat yet!  Do so below.  </h2>
+						<%
+						}
+						if (publicPic.equals("y")) {
+						%>		
+							<h3>Your Public Cat Picture </h3>
+							<dl>
+								<dt>Your public cute cat: </dt>
+								<dd><img src="<%= request.getContextPath() %>/protected/images/public-<%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %>.jpg"/></dd>	<dt>Click to delete: </dt>
+								<dd><a href="<%= request.getContextPath() %>/protected/myCatPhotos.jsp?action=delete&source=public">Delete public cat image</a></dd>
+							</dl>
+						<%
+						} else {
+						%>
+							<h2> You haven't uplaoded a public cute cat yet!  Do so below.  </h2>
+						<%
+						}
+						if (privatePic.equals("n") || publicPic.equals("n")) {
+						%>
+						<form id="fm1" action="fileupload.jsp" method="post" enctype="multipart/form-data">
+							<section class="row">
+								<label>Select private or public</label>
+								<select name="fileAccess">
+									<% 
+									if (privatePic.equals("n")) {
+										%>
+										<option value="private">private</option>
+										<%
+									}
+									if (publicPic.equals("n")) {
+										%>
+										<option value="public">public</option>
+										<%
+									}
+									%>
+								</select>
+							</section>
+							<section class="row">
+								<label>Select picture to uplaod </label>
+								<input type="file" name="file" size="50" />
+							</section>
+							<section class="row btn-row">
+								<input type="hidden" name="redirect" value="<%= request.getContextPath() %>/protected/myCatPhotos.jsp"/>
+								<input type="submit" value="Submit" />
+								<input type="reset" value="Reset" />
+							</section>
+						</form>
+						<%
+						}
+					}
+					%>
+							<h3>What do you want to do?</h3>
 				<dl>
 					<dt>Upload  </dt>
 					<dd><a href="<%= request.getContextPath() %>/protected/myCatPhotos.jsp">new private and public cat pictures </a></dd>

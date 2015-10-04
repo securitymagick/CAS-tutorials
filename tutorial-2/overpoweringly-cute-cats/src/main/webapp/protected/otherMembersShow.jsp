@@ -49,9 +49,24 @@
 					if (uName == null) {
 						out.print("uName is null");
 					} else if (!uName.isEmpty()) {
-					%>
-						<img src="<%= request.getContextPath() %>/protected/images/public-<% out.print(uName); %>.jpg"/>
-						<br/><br/>
+						Class.forName("com.mysql.jdbc.Driver");
+						Connection con2 = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
+						Statement st2 = con2.createStatement();
+						ResultSet rs1 = st2.executeQuery("select public from catphotos where uname = '" + uName + "'");
+						if (rs1.next()) {
+							String publicPic = rs1.getString("public");
+							if (publicPic.equals("y")) {
+							%>
+								<img src="<%= request.getContextPath() %>/protected/images/public-<% out.print(uName); %>.jpg"/>
+								<br/><br/>
+							<%
+							} else {
+							%>
+								<h2> <% out.print(uName); %> has no public cat photo </h2>
+							<%
+							}
+						}
+				%>
 						<h3> Comments </h3>						
 					<%	
 						Class.forName("com.mysql.jdbc.Driver");
