@@ -24,21 +24,23 @@
 					<dd><%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %></dd>
 				</dl>
 
-				<h3>Cat Picture</h3>
+				<h3>Your Private Cat Picture</h3>
 				<dl>
 					<dt>A cute cat: </dt>
-					<dd><img src="<%= request.getContextPath() %>/protected/images/marie.jpg" /></dd>
+					<dd><img src="<%= request.getContextPath() %>/protected/images/private-<%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %>.jpg" /></dd>
+				</dl>
 
+				<h3>Your Public Cat Picture </h3>
+				<dl>
 					<dt>Another cute cat: </dt>
-					<dd><img src="<%= request.getContextPath() %>/protected/images/schrodinger-1.jpg"/></dd>
-										
-					<dt>A cute kitten: </dt>
-					<dd><img src="<%= request.getContextPath() %>/protected/images/kitten-small.jpg" /></dd>
-					
-				
+					<dd><img src="<%= request.getContextPath() %>/protected/images/public-<%= request.getRemoteUser()== null ? "null" : request.getRemoteUser() %>.jpg"/></dd>
 				</dl>
 				<h3>What do you want to do?</h3>
 				<dl>
+					<dt>Upload  </dt>
+					<dd><a href="<%= request.getContextPath() %>/protected/myCatPhotos.jsp">new private and public cat pictures </a></dd>
+					<dt>See other and comment on other  </dt>
+					<dd><a href="<%= request.getContextPath() %>/protected/otherMembers.jsp">member's public cat pictures</a></dd>
 					<dt>The cats are overpowing me take me: </dt>
 					<dd><a href="<%= request.getContextPath() %>">back to other area</a></dd>
 				</dl>

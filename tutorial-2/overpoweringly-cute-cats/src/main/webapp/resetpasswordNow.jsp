@@ -21,16 +21,13 @@
 	String user = request.getParameter("uname");
 	String pwd = request.getParameter("pass");
 	String confirmPwd = request.getParameter("confirmPass");
-	String catname = request.getParameter("catname");
-	String email = request.getParameter("email");
-	String securityQuestion = request.getParameter("securityQuestion");
-	String answer = request.getParameter("answer");
+
 	Boolean error = false;
 
     if (!pwd.equals(confirmPwd)) {
 		error = true;
 	}
-	if (user.isEmpty() || pwd.isEmpty() || confirmPwd.isEmpty() || catname.isEmpty() || email.isEmpty() || securityQuestion.isEmpty() || answer.isEmpty()) {
+	if (user.isEmpty() || pwd.isEmpty() || confirmPwd.isEmpty()) {
 		error = true;
 	}
 
@@ -38,10 +35,10 @@
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
 		Statement st = con.createStatement();
-		int i = st.executeUpdate("insert into catlovers(cat_name, email, uname, pass, securityQuestion, answer, regdate) values ('" + catname + "','" + email + "','" + user + "','" + pwd  + "','" + securityQuestion + "','" + answer  + "', CURDATE())");
+		int i = st.executeUpdate("update catlovers set pass ='" + pwd  + "' where uname = '" + user + "'");
 		if (i > 0) {
 		%>
-				<h2>REGISTRATION SUCCESSFUL</h2>
+				<h2>PASSWORD CHANGE SUCCESSFUL</h2>
 				<h3>What do you want to do?</h3>
 				<p>					
 					<a href="<%= request.getContextPath() %>/protected/">See Overpoweringly Cute Cats</a>

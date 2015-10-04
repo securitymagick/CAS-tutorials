@@ -19,9 +19,10 @@
 			<div class="box" id="login">		
 <%
 	String user = request.getParameter("uname");
+	String answer = request.getParameter("answer");
 	Boolean error = false;
 
-	if (user.isEmpty()) {
+	if (user.isEmpty() || answer.isEmpty()) {
 		error = true;
 	}
 
@@ -29,26 +30,21 @@
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
 		Statement st = con.createStatement();
-		ResultSet rs = st.executeQuery("select securityQuestion from catlovers where uname = '" + user + "'");
+		ResultSet rs = st.executeQuery("select answer from catlovers where uname = '" + user + "'");
 		if (rs.next()) {
-			String securityQuestion = rs.getString("securityQuestion");
-			String securityQuestionString = "What is your pet's name?";
-			if (securityQuestion.equals("iceCream")) {
-				securityQuestionString = "What is your favorite ice cream flavor?";
-			}
-			if (securityQuestion.equals("cityBorn")) {
-				securityQuestionString = "What city were you born?";
-			}
-			if (securityQuestion.equals("highSchool")) {
-				securityQuestionString = "Where did you go to high school?";
-			}
+			String correctAnswer = rs.getString("answer");
+			if (correctAnswer.equals(answer)) {
 			%>
-				<h2>Answer your security question</h2>
-				<form id="fm1" method="post" action="resetpassword.jsp">
+				<h2>Reset Password</h2>
+				<form id="fm1" method="post" action="resetpasswordNow.jsp">
+                    <section class="row">
+                        <label>New Password</label>
+                        <input type="password" name="pass" value="" />
+                    </section>
 					<section class="row">
-                        <label> <% out.print(securityQuestionString); %></label>
-                        <input type="text" name="answer" value="" />
-					</section>
+                        <label>Confirm Password</label>
+                        <input type="password" name="confirmPass" value="" />
+                    </section>
 					<section class="row btn-row">
 						<input type="hidden" name="uname" value="<% out.print(user); %>" />
                         <input type="submit" value="Submit" />
@@ -56,14 +52,20 @@
 					</section>
 				</form>
 			<%
+			}
+			else {
+			%>
+				<h2>Error wrong answer!</h2>				
+			<%
+			}
 		} else {
 		%>
-			<h2>No such user has been registered!</h2>
+			<h2>Error contact catAdmin for help.</h2>
 		<%
 		}
 	} else {
 		%>
-		<h2>The user name was empty!</h2>
+		<h2>The user name or answer was empty!</h2>
 		<%
 		}
 %>

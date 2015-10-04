@@ -2,7 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 
 			<header>
-				<a id="logo" href="http://127.0.0.1:8080/mycatwebapp/" title="go to cute cat home page">Cute Cats</a>
+				<a id="logo" href="http://127.0.0.1:8080/overpoweringly-cute-cats/" title="go to damn vulnerable overpoweringly ute cat app">Cute Cats</a>
 				<h1>My Cat Web Application (CAS Client)</h1>
 				<h3>
 				<% 
