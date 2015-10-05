@@ -49,6 +49,8 @@ function ActionDeterminator() {
 					String action = request.getParameter("action");
 					String source = request.getParameter("source");
 					Boolean deleteError = false;
+					Class.forName("com.mysql.jdbc.Driver");
+					Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
 					if (action == null || source == null) {
 						deleteError = true;
 					} else if (action.isEmpty() || source.isEmpty()) {
@@ -59,10 +61,10 @@ function ActionDeterminator() {
 						String filePath = "C:\\Users\\leggosgirl\\Tools\\apache-tomcat-7.0.63\\webapps\\overpoweringly-cute-cats\\protected\\images\\";
 						String fileName = source + "-" + request.getRemoteUser() + ".jpg";
 						File file = new File(filePath + fileName);
-						if(file.delete()){
-							Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
+						if(file.delete()){	
 							Statement st = con.createStatement();
-							st.executeUpdate("update catphotos set " + source + "='n' where uname = '" + request.getRemoteUser() + "'");			
+							st.executeUpdate("update catphotos set " + source + "='n' where uname = '" + request.getRemoteUser() + "'");
+							st.close();
 							%>
 							<h2> Your <%= source %> cat picture was deleted. </h2>
 							<%
@@ -73,9 +75,7 @@ function ActionDeterminator() {
 						}			
 					}
 				
-					Class.forName("com.mysql.jdbc.Driver");
-					Connection con2 = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
-					Statement st2 = con2.createStatement();
+					Statement st2 = con.createStatement();
 					ResultSet rs1 = st2.executeQuery("select * from catphotos where uname = '" + request.getRemoteUser() + "'");
 					if (rs1.next()) {
 						String publicPic = rs1.getString("public");
@@ -143,6 +143,7 @@ function ActionDeterminator() {
 						<%
 						}
 					}
+					st2.close();
 					%>
 							<h3>What do you want to do?</h3>
 				<dl>
@@ -158,3 +159,8 @@ function ActionDeterminator() {
 	</div>									
 </body>
 </html>
+<%
+  con.close();
+  
+  
+ %>

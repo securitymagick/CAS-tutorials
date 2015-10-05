@@ -27,8 +27,12 @@
 	Class.forName("com.mysql.jdbc.Driver");
 	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
 	if (!error) {
-		Statement st = con.createStatement();
-		ResultSet rs = st.executeQuery("select securityQuestion from catlovers where uname = '" + user + "'");
+		String selectStatement = "select securityQuestion from catlovers where uname = ? ";
+		PreparedStatement prepStmt = con.prepareStatement(selectStatement);
+		prepStmt.setString(1, user);
+		ResultSet rs = prepStmt.executeQuery();		
+		//Statement st = con.createStatement();
+		//ResultSet rs = st.executeQuery("select securityQuestion from catlovers where uname = '" + user + "'");
 		if (rs.next()) {
 			String securityQuestion = rs.getString("securityQuestion");
 			String securityQuestionString = "What is your pet's name?";
@@ -60,7 +64,8 @@
 			<h2>No such user has been registered!</h2>
 		<%
 		}
-		 st.close();
+		prepStmt.close();
+		//st.close();
 	} else {
 		%>
 		<h2>The user name was empty!</h2>

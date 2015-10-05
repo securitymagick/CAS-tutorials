@@ -65,3 +65,7 @@
 	</div>									
 </body>
 </html>
+<%
+st2.close();
+con2.close();
+%>

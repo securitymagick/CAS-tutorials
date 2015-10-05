@@ -30,9 +30,9 @@
 	}else if (uName.isEmpty() || writtenBy.isEmpty() || comment.isEmpty()) {
 		error = true;
 	}
+	Class.forName("com.mysql.jdbc.Driver");
+	Connection con1 = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
 	if (!error) {
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection con1 = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
 		Statement st1 = con1.createStatement();
 		int i = st1.executeUpdate("insert into catcomments(uname, writtenBy, comment) values ('" + uName + "','" + writtenBy + "','" + comment  + "')");
 		if (i > 0) {
@@ -40,6 +40,7 @@
 				<h2>COMMENT ADDED</h2>
 		<%
 		}
+		st1.close();
 	}
 %>			
 				<h2>PROTECTED AREA</h2>
@@ -49,9 +50,7 @@
 					if (uName == null) {
 						out.print("uName is null");
 					} else if (!uName.isEmpty()) {
-						Class.forName("com.mysql.jdbc.Driver");
-						Connection con2 = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
-						Statement st2 = con2.createStatement();
+						Statement st2 = con1.createStatement();
 						ResultSet rs1 = st2.executeQuery("select public from catphotos where uname = '" + uName + "'");
 						if (rs1.next()) {
 							String publicPic = rs1.getString("public");
@@ -66,12 +65,11 @@
 							<%
 							}
 						}
+						st2.close();
 				%>
 						<h3> Comments </h3>						
 					<%	
-						Class.forName("com.mysql.jdbc.Driver");
-						Connection con3 = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
-						Statement st = con3.createStatement();
+						Statement st = con1.createStatement();
 						ResultSet rs = st.executeQuery("select comment, writtenBy from catcomments where uname = '" + uName +"'");
 						while (rs.next()) {
 							String printComment = rs.getString("comment");
@@ -80,6 +78,7 @@
 							<br/> Comment from <% out.print(printWrittenBy); %> : <% out.print(printComment); %>
 							<%
 						}
+						st.close();
 						%>
 						<form id="fm1" method="post" action="otherMembersShow.jsp">
 						    <section class="row">
@@ -112,3 +111,7 @@
 	</div>									
 </body>
 </html>
+<%
+
+con1.close();
+%>

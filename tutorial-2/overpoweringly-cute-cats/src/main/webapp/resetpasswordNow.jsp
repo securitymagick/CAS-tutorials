@@ -30,10 +30,9 @@
 	if (user.isEmpty() || pwd.isEmpty() || confirmPwd.isEmpty()) {
 		error = true;
 	}
-
+	Class.forName("com.mysql.jdbc.Driver");
+	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
 	if (!error) {	
-		Class.forName("com.mysql.jdbc.Driver");
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
 		Statement st = con.createStatement();
 		int i = st.executeUpdate("update catlovers set pass ='" + pwd  + "' where uname = '" + user + "'");
 		if (i > 0) {
@@ -48,6 +47,7 @@
 			<h2>An error occurred.  Please contact a catAdmin</h2>
 		<%
 		}
+		st.close();
 	} else {
 	%>
 		<h2>An error occurred.  Please try again or contact a catAdmin</h2>
@@ -59,3 +59,7 @@
 	</div>
 </body>
 </html>
+<%
+
+con.close();
+%>
