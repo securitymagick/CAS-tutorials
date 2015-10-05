@@ -4,65 +4,68 @@ Step One:  Set up MySQl database.
 Download MySQL.  Currently for windows go to https://dev.mysql.com/downloads/windows/installer/.  Download the mysql-installer-web-community-5.6.26.0.msi.  Run the installer.  On the screen where you set up your root account go ahead and add another account with DBAdmin rights.  This account is catAdmin / catPass.
 
 From the commandline client:
-CREATE DATABASE insecureCat;
-Use insecureCat;
 
-CREATE TABLE `catlovers` (
-  `cat_name` varchar(45) NOT NULL,
-  `email` varchar(45) NOT NULL,
-  `uname` varchar(45) NOT NULL,
-  `pass` varchar(45) NOT NULL,
-  `regdate` date NOT NULL,
-  `securityQuestion` varchar(45) NOT NULL,  
-  `answer` varchar(45) NOT NULL, 
-  PRIMARY KEY  (`email`)
-);
+	CREATE DATABASE insecureCat;
+	Use insecureCat;
 
-CREATE TABLE `catcomments` (
-	`id` int(10) unsigned NOT NULL auto_increment,
-	`uname` varchar(45) NOT NULL,
-	`writtenBy` varchar(45) NOT NULL,
-	`comment` varchar(128) NOT NULL,  
-	PRIMARY KEY  (`id`)
-);
+	CREATE TABLE `catlovers` (
+		 `cat_name` varchar(45) NOT NULL,
+  		`email` varchar(45) NOT NULL,
+  		`uname` varchar(45) NOT NULL,
+  		`pass` varchar(45) NOT NULL,
+  		`regdate` date NOT NULL,
+		`securityQuestion` varchar(45) NOT NULL,  
+  		`answer` varchar(45) NOT NULL, 
+  		PRIMARY KEY  (`email`)
+	);
+
+	CREATE TABLE `catcomments` (
+		`id` int(10) unsigned NOT NULL auto_increment,
+		`uname` varchar(45) NOT NULL,
+		`writtenBy` varchar(45) NOT NULL,
+		`comment` varchar(128) NOT NULL,  
+		PRIMARY KEY  (`id`)
+	);
 
 	CREATE TABLE `catphotos` (
-	`uname` varchar(45) NOT NULL,
-	`private` varchar(1) NOT NULL,
-	`public` varchar(1) NOT NULL,  
-  PRIMARY KEY  (`uname`)
-);
+		`uname` varchar(45) NOT NULL,
+		`private` varchar(1) NOT NULL,
+		`public` varchar(1) NOT NULL,  
+  		PRIMARY KEY  (`uname`)
+	);
 
 Step 2:  Modify CAS Client from tutorial 1 to use this database.
 Modify your cas pom to include:
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-support-jdbc</artifactId>
-			<version>${cas.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>c3p0</groupId>
-			<artifactId>c3p0</artifactId>
-			<version>0.9.1.2</version>
-		</dependency>
-		<dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>5.1.26</version>
-    </dependency>
+
+	<dependency>
+		<groupId>org.jasig.cas</groupId>
+		<artifactId>cas-server-support-jdbc</artifactId>
+		<version>${cas.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>c3p0</groupId>
+		<artifactId>c3p0</artifactId>
+		<version>0.9.1.2</version>
+	</dependency>
+	<dependency>
+        	<groupId>mysql</groupId>
+        	<artifactId>mysql-connector-java</artifactId>
+        	<version>5.1.26</version>
+    	</dependency>
 
 Modify the deployConfigContext.xml
 Add the following beans:
-	<bean id="passwordEncoder"
-      class="org.jasig.cas.authentication.handler.PlainTextPasswordEncoder" />
 
-<bean id="dbAuthHandler"
-      class="org.jasig.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler"
-      p:dataSource-ref="dataSource"
-      p:passwordEncoder-ref="passwordEncoder"
-      p:tableUsers="catlovers"
-      p:fieldUser="uname"
-      p:fieldPassword="pass" />
+	<bean id="passwordEncoder"
+      		class="org.jasig.cas.authentication.handler.PlainTextPasswordEncoder" />
+
+	<bean id="dbAuthHandler"
+      		class="org.jasig.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler"
+      		p:dataSource-ref="dataSource"
+      		p:passwordEncoder-ref="passwordEncoder"
+      		p:tableUsers="catlovers"
+      		p:fieldUser="uname"
+      		p:fieldPassword="pass" />
 	
 	<bean id="dataSource"
 		class="com.mchange.v2.c3p0.ComboPooledDataSource"
@@ -82,7 +85,7 @@ Add the following beans:
 		p:preferredTestQuery="${database.pool.connectionHealthQuery}" />
 
 Change the authenticationManager to point to the dbAuthHandler
-      +-->
+    
     <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
         <constructor-arg>
             <map>
@@ -98,7 +101,7 @@ Change the authenticationManager to point to the dbAuthHandler
         </constructor-arg>
 
 Copy the cas.properties from a target to src.  Add the following to the bottom:
-# == Basic database connection pool configuration ==
+     # == Basic database connection pool configuration ==
     database.driverClass=com.mysql.jdbc.Driver
     database.url=jdbc:mysql://localhost:3306/insecureCat
     database.user=catAdmin
