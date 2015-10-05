@@ -10,7 +10,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<title>Protected area</title>
+<script>
+function ActionDeterminator() {
+  var selItem = document.getElementById("fileAccessSelect")
+  var selValue = selItem.options[selItem.selectedIndex].value;	
+  if(selValue == "public") {
+	document.getElementById("fm1").action = "fileupload.jsp";
+  }
+  if(selValue == "private") {
+	document.getElementById("fm1").action = "private-fileupload.jsp";
+  }
+  document.getElementById("fm1").submit();
+}
+</script>
+<title>Private area</title>
 <link rel="stylesheet" type="text/css" href="<%= request.getContextPath() %>/main.css">
 </head>
 <body id="cas">
@@ -102,7 +115,7 @@
 						<form id="fm1" action="fileupload.jsp" method="post" enctype="multipart/form-data">
 							<section class="row">
 								<label>Select private or public</label>
-								<select name="fileAccess">
+								<select id="fileAccessSelect" name="fileAccess">
 									<% 
 									if (privatePic.equals("n")) {
 										%>
@@ -123,7 +136,7 @@
 							</section>
 							<section class="row btn-row">
 								<input type="hidden" name="redirect" value="<%= request.getContextPath() %>/protected/myCatPhotos.jsp"/>
-								<input type="submit" value="Submit" />
+								<input type="submit" value="Submit" onClick="ActionDeterminator();" />
 								<input type="reset" value="Reset" />
 							</section>
 						</form>
