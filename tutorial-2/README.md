@@ -101,6 +101,7 @@ Change the authenticationManager to point to the dbAuthHandler
         </constructor-arg>
 
 Copy the cas.properties from a target to src.  Add the following to the bottom:
+
      # == Basic database connection pool configuration ==
     database.driverClass=com.mysql.jdbc.Driver
     database.url=jdbc:mysql://localhost:3306/insecureCat
