@@ -19,19 +19,16 @@
 			<div class="box" id="login">		
 <%
 	String user = request.getParameter("uname");
-	String catname = request.getParameter("catname");
 	Boolean error = false;
-	
-	if (user == null || catname == null) {
-		error = true;
-	} else if (user.isEmpty() || catname.isEmpty()) {
+
+	if (user.isEmpty()) {
 		error = true;
 	}
 	Class.forName("com.mysql.jdbc.Driver");
 	Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/insecureCat", "catAdmin", "catPass");
 	if (!error) {
 		Statement st = con.createStatement();
-		ResultSet rs = st.executeQuery("select securityQuestion from catlovers where uname = '" + user + "' and cat_name = '" + catname + "'");
+		ResultSet rs = st.executeQuery("select securityQuestion from catlovers where uname = '" + user + "'");
 		if (rs.next()) {
 			String securityQuestion = rs.getString("securityQuestion");
 			String securityQuestionString = "What is your pet's name?";
@@ -60,13 +57,13 @@
 			<%
 		} else {
 		%>
-			<h2>The information does not match our records.</h2>
+			<h2>No such user has been registered!</h2>
 		<%
 		}
 		 st.close();
 	} else {
 		%>
-		<h2>The user name  or cat name was empty!</h2>
+		<h2>The user name was empty!</h2>
 		<%
 		}
 %>

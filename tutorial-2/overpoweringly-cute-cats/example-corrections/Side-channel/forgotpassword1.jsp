@@ -1,5 +1,7 @@
 
 <%@ page import ="java.sql.*" %>
+<%@ page import ="java.security.*" %>
+<%@ page import ="java.io.*" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%
@@ -33,6 +35,19 @@
 		Statement st = con.createStatement();
 		ResultSet rs = st.executeQuery("select securityQuestion from catlovers where uname = '" + user + "' and cat_name = '" + catname + "'");
 		if (rs.next()) {
+			SecureRandom random = SecureRandom.getInstance("SHA1PRNG"); 
+			random.setSeed(System.currentTimeMillis());
+			String token = "";
+			for (int i=0; i<6; i++) {
+				Integer randInt = random.nextInt(10);
+				token += randInt.toString();
+			}
+			PrintWriter pw = new PrintWriter(new FileOutputStream("C:\\Users\\leggosgirl\\Desktop\\token.txt"));
+			pw.println(token);
+			pw.close();
+			session.setAttribute("forgotpasswordToken", token);
+			session.setAttribute("forgotpasswordUser", user);
+			session.setAttribute("forgotpasswordState", "forgotpassword1");
 			String securityQuestion = rs.getString("securityQuestion");
 			String securityQuestionString = "What is your pet's name?";
 			if (securityQuestion.equals("iceCream")) {
@@ -45,14 +60,17 @@
 				securityQuestionString = "Where did you go to high school?";
 			}
 			%>
-				<h2>Answer your security question</h2>
+				<h2>A token has been generated and sent to you.  Enter the token and answer your security question</h2>
 				<form id="fm1" method="post" action="resetpassword.jsp">
 					<section class="row">
                         <label> <% out.print(securityQuestionString); %></label>
                         <input type="text" name="answer" value="" />
 					</section>
+					<section class="row">
+                        <label> Token </label>
+                        <input type="text" name="token" value="" />
+					</section>
 					<section class="row btn-row">
-						<input type="hidden" name="uname" value="<% out.print(user); %>" />
                         <input type="submit" value="Submit" />
                         <input type="reset" value="Reset" />
 					</section>

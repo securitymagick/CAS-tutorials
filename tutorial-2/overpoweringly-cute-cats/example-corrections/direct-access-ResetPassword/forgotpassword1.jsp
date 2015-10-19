@@ -33,6 +33,8 @@
 		Statement st = con.createStatement();
 		ResultSet rs = st.executeQuery("select securityQuestion from catlovers where uname = '" + user + "' and cat_name = '" + catname + "'");
 		if (rs.next()) {
+			session.setAttribute("forgotpasswordUser", user);
+			session.setAttribute("forgotpasswordState", "forgotpassword1");
 			String securityQuestion = rs.getString("securityQuestion");
 			String securityQuestionString = "What is your pet's name?";
 			if (securityQuestion.equals("iceCream")) {
@@ -52,7 +54,6 @@
                         <input type="text" name="answer" value="" />
 					</section>
 					<section class="row btn-row">
-						<input type="hidden" name="uname" value="<% out.print(user); %>" />
                         <input type="submit" value="Submit" />
                         <input type="reset" value="Reset" />
 					</section>
