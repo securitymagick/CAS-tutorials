@@ -1,8 +1,11 @@
+#Setting Up CAS to Use a Database
+
 This is the second tutorial on my CAS and secure coding series.  It will take you through a more complex CAS set up to a database and show how to fix and correct certain common web application problems.
 
 Step One:  Set up MySQl database.
 Download MySQL.  Currently for windows go to https://dev.mysql.com/downloads/windows/installer/.  Download the mysql-installer-web-community-5.6.26.0.msi.  Run the installer.  On the screen where you set up your root account go ahead and add another account with DBAdmin rights.  This account is catAdmin / catPass.
 
+Step Two:  Create your databases.  
 From the commandline client:
 
 	CREATE DATABASE insecureCat;
@@ -34,7 +37,7 @@ From the commandline client:
   		PRIMARY KEY  (`uname`)
 	);
 
-Step 2:  Modify CAS Client from tutorial 1 to use this database.
+Step Three:  Modify CAS Client from tutorial 1 to use this database.
 Modify your cas pom to include:
 
 	<dependency>
@@ -141,12 +144,4 @@ Copy the cas.properties from a target to src.  Add the following to the bottom:
     # Amount of time in ms to wait between successive aquire retry attempts.
     database.pool.acquireRetryDelay=2000
 
-	
-Step 3:  Find an Injection Attack in Cat Application
-Try using a single quote in a text file and looking for a MySQL error that results.
-
-Step 4:  Fix Injection Attack
-Verify that the error no longer occurs.
-
-Step 5:  Evaluate the authentication and session management
-Come up with a list of possible problems and see how you think they should be fixed.
+Now you are ready to start the OWASP top 10 tutorials.  CAS-tutorials 3 and 4 are part of one of the OWASP top 10 tutorials.
